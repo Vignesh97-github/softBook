@@ -19,7 +19,7 @@ app.use('/api/v1/users', userRoutes)
 
 
 //start the server
-const port = process.env.PORT || 5001
+const port = process.env.PORT || 4001
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
