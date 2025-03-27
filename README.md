@@ -10,3 +10,22 @@ SoftBook is a modern social networking app designed to connect people through se
 - Privacy Controls – Set post visibility, manage connections, and secure personal data.
 - Notifications – Stay updated with alerts for likes, comments, and messages.
 - Search & Discovery – Find new friends, trending topics, and relevant content easily.
+
+## Tech Satck
+
+- Node.js
+- Express.js
+- dotenv
+- mongoose
+- Nodemon
+
+## API Endpoints
+Users
+- /api/v1/user/create
+- /api/v1/user/getall
+- /api/v1/user/get/:id
+- /api/v1/user/delete/:id
+- /api/v1/user/update/:id
+
+## Security Consideration
+
