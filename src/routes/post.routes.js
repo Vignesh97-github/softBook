@@ -1,5 +1,5 @@
 import exprees from "express";
-import { createPost,getAllPost,getPost,deletePost,updatePost } from "../controllers/post.controllers";
+import { createPost,getAllPost,getPost,deletePost,updatePost } from "../controllers/post.controllers.js";
 
 const router = exprees.Router();
 
