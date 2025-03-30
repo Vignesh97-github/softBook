@@ -26,6 +26,25 @@ Users
 - /api/v1/user/get/:id
 - /api/v1/user/delete/:id
 - /api/v1/user/update/:id
+- /api/v1/user/logout
+
+POST
+
+- /api/v1/post/create
+- /api/v1/post/delete/:id
+- /api/v1/post/update/:id
+- /api/v1/post/getall
+- /api/v1/post/get/:id
+
+MESSAGE
+
+- /api/v1/message/send
+- /api/v1/message/unsend/:id
+- /api/v1/message/get/:id
+- /api/v1/messgae/getAll
+- /api/v1/messgae/read/:id
+- /api/v1/messgae/delete/:id
+
 
 ## Security Consideration
 
