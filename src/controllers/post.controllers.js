@@ -1,17 +1,17 @@
-const createPost =()=>{
-
+const createPost =(req,res)=>{
+    res.send("Created Post Successfully");
 }
-const getPost = ()=>{
-
+const getPost = (req,res)=>{
+    res.send("Get Post Successfully");
 }
-const getAllPost = ()=>{
-
+const getAllPost = (req,res)=>{
+    res.send("GetAll Post Successfully");
 }
-const updatePost = ()=> {
-
+const updatePost = (req,res)=> {
+    res.send("Updated Post Successfully");
 }
-const deletePost = ()=>{
-    
+const deletePost = (req,res)=>{
+   res.send("Deleted Post Successfully"); 
 }
 
 export {createPost,getAllPost,getPost,updatePost,deletePost}

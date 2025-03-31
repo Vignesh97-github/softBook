@@ -1,12 +1,12 @@
-import exprees from "express";
-import { createPost,getAllPost,getPost,deletePost,updatePost } from "../controllers/post.controllers.js";
+import express from "express";
+import { createPost,getPost,getAllPost,deletePost,updatePost } from "../controllers/post.controllers.js";
 
-const router = exprees.Router();
+const router = express.Router();
 
-router.post('/create',createPost)
-router.get('/get/:id',getPost)
-router.get('/getall',getAllPost)
-router.put('/update/:id',updatePost)
-router.delete('/delete/:id',deletePost)
+router.post('/create',createPost);
+router.get('/get/:id',getPost);
+router.get('/getall',getAllPost);
+router.put('/update/:id',updatePost);
+router.delete('/delete/:id',deletePost);
 
 export default router;
