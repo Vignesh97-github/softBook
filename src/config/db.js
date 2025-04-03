@@ -15,3 +15,8 @@ const connectDB = async()=>{
 };
 
 export default connectDB;
+
+
+
+//mongodb   nosql database, schmaless, validation minimal, no middlewares
+// mongoose   odm for mongodb, to provide schema, validation strong, provides predefined middleware (pre/post hooks)
