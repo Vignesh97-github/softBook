@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
 import User from "../modules/user.model.js";
 import hashPassword from "../utils/hashPwd.js";
+import { hash } from "bcryptjs";
 
 const Createuser = async (req,res)=>{
     //business logic for creating a user account
     const {name,email,password,mobile,gender} = req.body
+    const mobilenumber = Number(mobile);
 
     //Check if all parameter are present
-    if(!(name && email && password && gender))
+    if(!(name && email && password && gender && mobilenumber))
         return res.status(400)
                   .json({
                     success:false,
@@ -28,6 +30,8 @@ const Createuser = async (req,res)=>{
                     message:"Invalid email id"
                 })
 
+    const hashedPassword = await hashPassword(password);
+
     try {
         const existinguser = await User.findOne({email:email})
         if(existinguser)
@@ -45,6 +49,7 @@ const Createuser = async (req,res)=>{
             name:name,
             email:email,
             password:password,
+            hashPassword:hashPassword,
             mobile:mobile,
             gender:gender
         })
