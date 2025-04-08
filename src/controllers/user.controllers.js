@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 import User from "../modules/user.model.js";
+import fs from "fs";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import hashPassword from "../utils/hashPwd.js";
 import { hash } from "bcryptjs";
 
 const Createuser = async (req, res) => {
-    //business logic for creating a user account
+    //
     const { name, email, password, mobile, gender, avatar } = req.body
     const mobilenumber = Number(mobile);
 
@@ -42,7 +43,7 @@ const Createuser = async (req, res) => {
                     message: "user with this email already exist"
                 })
 
-        let imagePath = req.file.path;
+        const imagePath = req.file.path;
         const imageURL = await uploadOnCloudinary(imagePath);
 
         if (!imageURL)
@@ -52,31 +53,40 @@ const Createuser = async (req, res) => {
                     message: "Failed to upload image"
                 })
 
+        fs.unlink(imagePath,(err)=>{
+            if(err)
+                return res.status(400)
+                    .json({
+                        success: false,
+                        message: "Failed to delete image"
+                    })
+        })
 
-        // const user = new User({
-        //     name: name,
-        //     email: email,
-        //     password: password,
-        //     hashPwd: hashedPwd,
-        //     mobile: mobilenumber,
-        //     gender: gender,
-        //     avatar: imageURL
-        // })
-        // user.save()
-       
-        // res
-        //     .status(200)
-        //     .json({
-        //         success: true,
-        //         message: "User Created Successfully",
-        //         user: user
-        //     })
+
+        const user = new User({
+            name: name,
+            email: email,
+            password: password,
+            hashPwd: hashedPwd,
+            mobile: mobilenumber,
+            gender: gender,
+            avatar: imageURL
+        })
+        await user.save()
+
+        res
+            .status(200)
+            .json({
+                success: true,
+                message: "User Created Successfully",
+                // user: user
+            })
     } catch (error) {
         res
             .status(400)
             .json({
                 success: false,
-                message: error
+                message: error.message
             })
     }
 }
@@ -104,5 +114,13 @@ const logoutuser = (req, res) => {
     //business logic for logging out a user
     res.send("Logout Successfully");
 }
+const loginuser = (req, res) => {
+    // 1. Check for input email, password
+    //try
+    // 2. check if user exists
+    // 3. check if password is correct
+    // 4. send response to token
+    //catch
+}
 
-export { Createuser, getallusers, getuser, deleteuser, updateuser, logoutuser }
+export { Createuser, getallusers, getuser, deleteuser, updateuser, logoutuser, loginuser}

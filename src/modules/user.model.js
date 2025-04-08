@@ -6,7 +6,7 @@ const userSchema = new Schema({
         trim:true
     },
     email:{
-        type:String, // data type of the value
+        type:String, // data type of the value  
         required: true, //value is compulsory
         //unique: true, // value should be unique / no two users can have the same email
         trim:true
@@ -37,7 +37,8 @@ const userSchema = new Schema({
         trim:true
     },
     avatar:String,
-    DOB:'date'
+    DOB:'date',
+    hashPwd:String
 })
 
 const User = model('User',userSchema);

@@ -9,10 +9,10 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_SECRET_KEY
 })
 
-const uploadOnCloudinary = async (localImagePath) => {
+const uploadOnCloudinary = async (localImagePath) => {   
     try {
         const response = await cloudinary.uploader.upload(localImagePath, { type: 'upload' })
-        console.log('response -->', response)
+        //console.log('response -->', response)
         return response.url;
     } catch (error) {
         console.error('Cloudinary Upload Error:', error);

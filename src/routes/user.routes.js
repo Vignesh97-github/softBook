@@ -1,5 +1,5 @@
 import express from 'express';
-import { Createuser, deleteuser, getallusers, getuser, updateuser,logoutuser } from '../controllers/user.controllers.js';
+import { Createuser, deleteuser, getallusers, getuser, updateuser,logoutuser,loginuser } from '../controllers/user.controllers.js';
 import { upload } from '../middlewares/multer.middleware.js';
 
 const router = express.Router();
@@ -10,5 +10,6 @@ router.get('/get/:id',getuser);
 router.delete('/delete/:id',deleteuser);
 router.put('/update/:id',updateuser);
 router.get('/logout',logoutuser);
+router.post('/login',loginuser);
 
 export default router;
