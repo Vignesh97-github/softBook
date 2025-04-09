@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import User from "../modules/user.model.js";
 import fs from "fs";
 import uploadOnCloudinary from "../config/cloudinary.js";
-import hashPassword from "../utils/hashPwd.js";
+import {hashPassword,verifyPwd} from "../utils/hashPwd.js";
 import { hash } from "bcryptjs";
 
 const Createuser = async (req, res) => {
@@ -93,34 +93,138 @@ const Createuser = async (req, res) => {
 
 const getallusers = (req, res) => {
     //business logic for getting all users
-    res.send("getall Successfully");
+    try {
+        const users = User.find()
+        if(!users)
+            res.status(400)
+                .json({
+                    success: false,
+                    message: "No users found"
+                })
+        res.status(200)
+        .json({
+            success: true,
+            message: "Users retieved successfully",
+            users: users
+        })
+    } catch (error) {
+        res,status(400)
+        .json({
+            success: false,
+            message: error.message
+        })
+    }
 }
 
 const getuser = (req, res) => {
     //business logic for getting a user
-    res.send("get Successfully");
+    const {id} = req.params
+    try {
+        const user = User.findById(id)
+        if(!user)
+            res.status(400)
+                .json({
+                    success: false,
+                    message: "User not found"
+                })
+        res.status(200)
+            .json({
+                success: true,
+                message: "User retrieved successfully",
+                user: user
+            })
+    } catch (error) {
+        res.status(400).json({success:false,message:error.message})
+    }
 }
 
 const deleteuser = (req, res) => {
-    //business logic for deleting a user
-    res.send("deleted Successfully");
+    const {id} = req.params
+    try {
+        const user = User.findByIdAndDelete(id)
+        if(!user)
+            res.status(400)
+                .json({
+                    success: false,
+                    message:'No user found'
+                })
+        res.status(200)
+        .json({
+            success: true,
+            message: "User deleted successfully",
+        })
+    } catch (error) {
+        res.status(400).json({success:false,message:error.message})
+    }
 }
 
 const updateuser = (req, res) => {
-    //business logic for updating a user
-    res.send("Updated Successfully");
+    const {id} = req.params
+    try {
+        const user = User.findByIdAndUpdate(id)
+        if(!user)
+            res.status(400)
+                .json({
+                    success: false,
+                    message: "User not found"
+                })
+        res.status(200)
+            .json({
+                success: true,
+                message: "User updated successfully",
+            })
+    } catch (error) {
+        res.status(400).json({success:false,message:error.message})
+    }
 }
 const logoutuser = (req, res) => {
     //business logic for logging out a user
     res.send("Logout Successfully");
 }
-const loginuser = (req, res) => {
+const loginuser = async (req, res) => {
+    // 1. access token using JWT
+    // 2. refresh token using JWT
     // 1. Check for input email, password
-    //try
-    // 2. check if user exists
-    // 3. check if password is correct
-    // 4. send response to token
-    //catch
+    const { email, password } = req.body;
+    if(!email || !password)
+        res.status(400)
+            .json({
+                success: false,
+                message: "Please enter email and password"
+            })
+    try {
+        // 2. check if user exists
+        const user = await User.findOne({ email: email });
+        if(!user)
+            res.status(400)
+                .json({
+                    success: false,
+                    message: "User does not exist"
+                })
+        // 3. check if password is correct
+        const isPwdCorrect = await verifyPwd(password,user.hashPwd)
+        if(!isPwdCorrect)
+            res.status(400)
+                .json({
+                    success: false,
+                    message: "Incorrect password"
+                })
+        // 4. send response to client
+        res.status(200)
+            .json({
+                success: true,
+                message: "Login Successfully",
+                user: user
+            })
+    } catch (error) {
+        res.status(400)
+            .json({
+                success: false,
+                message: err.message
+            })
+    }
+    
+    
 }
 
 export { Createuser, getallusers, getuser, deleteuser, updateuser, logoutuser, loginuser}

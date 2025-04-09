@@ -20,4 +20,15 @@ const hashPassword = async (inputPassword) => {
     // });
 }
 
-export default hashPassword;
+const verifyPwd = (inputPassword,hashedPassword) => {
+    try {
+        bcrypt.verify(inputPassword,hashedPassword, (err,isMatch) => {
+            if(err) return false;
+            return isMatch;
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+export {hashPassword, verifyPwd};
