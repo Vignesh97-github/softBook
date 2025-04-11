@@ -8,7 +8,7 @@ router.post('/create',upload.single('avatar'),Createuser);
 router.get('/getall',getallusers);
 router.get('/get/:id',getuser);
 router.delete('/delete/:id',deleteuser);
-router.put('/update/:id',updateuser);
+router.patch('/update/:id',updateuser);
 router.get('/logout',logoutuser);
 router.post('/login',loginuser);
 

@@ -158,21 +158,71 @@ const deleteuser = (req, res) => {
     }
 }
 
-const updateuser = (req, res) => {
+const updateuser = async (req, res) => {
     const {id} = req.params
+    const {name, mobile, bio, DOB} = req.body
+    const {path} = req.file
+
+    if(!name && !mobile && !bio && !DOB)
+        return res.status(400)
+                .json({
+                    success: false,
+                    message: "No fields to update"
+                })
     try {
-        const user = User.findByIdAndUpdate(id)
+        const user = User.findById(id)
         if(!user)
             res.status(400)
                 .json({
                     success: false,
-                    message: "User not found"
+                    message: "No user found"
                 })
-        res.status(200)
-            .json({
-                success: true,
-                message: "User updated successfully",
+        let imageURL
+        if(path){
+            const imagePath = req.file.path
+            imageURL = await uploadOnCloudinary(imagePath)
+            if(!imageURL)
+                return res.status(400)
+                        .json({
+                            success: false,
+                            message: "Failed to upload image"
+                        })
+            fs.unlink(imagePath,(err)=>{
+                if(err)
+                    return res.status(400)
+                            .json({
+                                success:false,
+                                message:"something went wrong"
+                            })
             })
+        }
+        
+        // use this when changes are conditional
+        // database calls = 2
+        // triggers middlewares
+        user.name = name || user.name
+        user.mobile = mobile || user.mobile
+        user.bio = bio || user.bio
+        user.DOB = DOB || user.DOB
+        user.avatar = req.file.path || user.avatar
+        user.save();
+        
+        // use this when changes are conditional
+        // database calls = 1
+        // no middleware
+        // const updateUser = await User.findByIdAndUpdate(id,{
+        //     name: name||user.name
+        //     mobile: mobile||user.mobile
+        //     bio: bio||user.bio
+        //     DOB: DOB||user.DOB
+        //     avatar: imageURL||user.avatar
+        // })
+        // if(!updateUser)
+        //     return res.status(400)
+        //             .json({
+        //                 success: false,
+        //                 message: "user not updated"
+        //             })
     } catch (error) {
         res.status(400).json({success:false,message:error.message})
     }

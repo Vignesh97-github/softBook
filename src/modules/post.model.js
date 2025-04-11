@@ -3,13 +3,14 @@ const postSchema = new Schema({
     postCaption:{
         type:String,
     },
-    postimage:{
+    postImage:{
         type:String,
         required:true,
     },
-    postvideos:{
-        type:String
+    postBy:{
+        type:mongoose.Schema.Types
     }
+},{timestamps:true
 })
 
 const Post = model('Post',postSchema);
