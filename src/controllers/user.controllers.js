@@ -4,6 +4,7 @@ import fs from "fs";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import {hashPassword,verifyPwd} from "../utils/hashPwd.js";
 import { hash } from "bcryptjs";
+import { generateToken,verifyToken } from "../utils/jwt.js";
 
 const Createuser = async (req, res) => {
     //
@@ -259,6 +260,15 @@ const loginuser = async (req, res) => {
                     success: false,
                     message: "Incorrect password"
                 })
+
+        const token = await generateToken(email,user.hashPwd)
+        if(!token)
+            res.status(400).json({
+                success:false,
+                message:"token generation failed"
+            })
+        console.log('token =>',token)
+
         // 4. send response to client
         res.status(200)
             .json({
