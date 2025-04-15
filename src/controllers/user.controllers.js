@@ -91,11 +91,10 @@ const Createuser = async (req, res) => {
             })
     }
 }
-
-const getallusers = (req, res) => {
+const getallusers = async (req, res) => {
     //business logic for getting all users
     try {
-        const users = User.find()
+        const users = await User.find().select('-hashedPwd -_V -password')
         if(!users)
             res.status(400)
                 .json({
@@ -112,16 +111,15 @@ const getallusers = (req, res) => {
         res,status(400)
         .json({
             success: false,
-            message: error.message
+            message: "something went wrong"
         })
     }
 }
-
-const getuser = (req, res) => {
+const getuser = async (req, res) => {
     //business logic for getting a user
     const {id} = req.params
     try {
-        const user = User.findById(id)
+        const user = await User.findById(id).select('-hashedPwd -_V -password')
         if(!user)
             res.status(400)
                 .json({
@@ -135,14 +133,13 @@ const getuser = (req, res) => {
                 user: user
             })
     } catch (error) {
-        res.status(400).json({success:false,message:error.message})
+        res.status(400).json({success:false,message:"something went wrong"})
     }
 }
-
-const deleteuser = (req, res) => {
+const deleteuser = async (req, res) => {
     const {id} = req.params
     try {
-        const user = User.findByIdAndDelete(id)
+        const user = await User.findByIdAndDelete(id)
         if(!user)
             res.status(400)
                 .json({
@@ -155,10 +152,9 @@ const deleteuser = (req, res) => {
             message: "User deleted successfully",
         })
     } catch (error) {
-        res.status(400).json({success:false,message:error.message})
+        res.status(400).json({success:false,message:"something went wrong"})
     }
 }
-
 const updateuser = async (req, res) => {
     const {id} = req.params
     const {name, mobile, bio, DOB} = req.body
@@ -171,14 +167,14 @@ const updateuser = async (req, res) => {
                     message: "No fields to update"
                 })
     try {
-        const user = User.findById(id)
+        const user = await User.findById(id)
         if(!user)
             res.status(400)
                 .json({
                     success: false,
                     message: "No user found"
                 })
-        let imageURL
+        let imageURL = ""
         if(path){
             const imagePath = req.file.path
             imageURL = await uploadOnCloudinary(imagePath)
@@ -206,7 +202,7 @@ const updateuser = async (req, res) => {
         user.bio = bio || user.bio
         user.DOB = DOB || user.DOB
         user.avatar = req.file.path || user.avatar
-        user.save();
+        await user.save();
         
         // use this when changes are conditional
         // database calls = 1
@@ -225,7 +221,7 @@ const updateuser = async (req, res) => {
         //                 message: "user not updated"
         //             })
     } catch (error) {
-        res.status(400).json({success:false,message:error.message})
+        res.status(400).json({success:false,message:"something went wrong"})
     }
 }
 const logoutuser = (req, res) => {
@@ -245,7 +241,7 @@ const loginuser = async (req, res) => {
             })
     try {
         // 2. check if user exists
-        const user = await User.findOne({ email: email });
+        const user = await User.findOne({ email: email }).select('-hashedPwd -_V -password');
         if(!user)
             res.status(400)
                 .json({
@@ -253,7 +249,7 @@ const loginuser = async (req, res) => {
                     message: "User does not exist"
                 })
         // 3. check if password is correct
-        const isPwdCorrect = await verifyPwd(password,user.hashPwd)
+        const isPwdCorrect = await verifyPwd(password, user.hashPwd)
         if(!isPwdCorrect)
             res.status(400)
                 .json({
@@ -262,7 +258,7 @@ const loginuser = async (req, res) => {
                 })
 
         const token = await generateToken(email,user.hashPwd)
-        if(!token)
+        if(!token)  
             res.status(400).json({
                 success:false,
                 message:"token generation failed"
@@ -271,6 +267,10 @@ const loginuser = async (req, res) => {
 
         // 4. send response to client
         res.status(200)
+            .cookie('token',token,{
+                httpOnly:true,
+                secure:true
+            })
             .json({
                 success: true,
                 message: "Login Successfully",
@@ -286,5 +286,26 @@ const loginuser = async (req, res) => {
     
     
 }
+const verifyUser = async (req, res) => {
+    const { id } = req.params
+    try {
+        const user = await User.findById(id)
+        if(!user)
+            res.status(400).json({
+                success:false,
+                message:"User does not exist"
+        })
+        const updatedUser = await User.findByIdAndUpdate(id,{isVerified:true})
+        // await User.updateOne({_id:id},{isverified:true})
+        res.status(200)
+            .json({
+                success: true,
+                message: "User verified successfully",
+                updatedUser:updatedUser
+            })
+    } catch (error) {
+        res.status(400).json({success:false, message:"something went wrong"})
+    }
+}
 
-export { Createuser, getallusers, getuser, deleteuser, updateuser, logoutuser, loginuser}
+export { Createuser, getallusers, getuser, deleteuser, updateuser, logoutuser, loginuser, verifyUser }

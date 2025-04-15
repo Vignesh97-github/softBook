@@ -20,13 +20,12 @@ const hashPassword = async (inputPassword) => {
     // });
 }
 
-const verifyPwd = (inputPassword,hashedPassword) => {
+const verifyPwd = async (inputPassword,hashedPassword) => {
     try {
-        bcrypt.verify(inputPassword,hashedPassword, (err,isMatch) => {
-            if(err) return false;
-            return isMatch;
-        })
+        const isMatch = await bcrypt.compare(inputPassword,hashedPassword)
+        return isMatch;
     } catch (error) {
+        console.log('error', error)
         return false;
     }
 }
