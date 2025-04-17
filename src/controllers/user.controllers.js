@@ -226,7 +226,13 @@ const updateuser = async (req, res) => {
 }
 const logoutuser = (req, res) => {
     //business logic for logging out a user
-    res.send("Logout Successfully");
+    res
+        .cookie('token',"")
+        .status(200)
+        .json({
+            success: true,
+            message: "logged out successfully"
+        })
 }
 const loginuser = async (req, res) => {
     // 1. access token using JWT
@@ -241,7 +247,7 @@ const loginuser = async (req, res) => {
             })
     try {
         // 2. check if user exists
-        const user = await User.findOne({ email: email }).select('-hashedPwd -_V -password');
+        const user = await User.findOne({ email: email }).select('-__v -password');
         if(!user)
             res.status(400)
                 .json({
@@ -280,7 +286,7 @@ const loginuser = async (req, res) => {
         res.status(400)
             .json({
                 success: false,
-                message: err.message
+                message: error.message
             })
     }
     

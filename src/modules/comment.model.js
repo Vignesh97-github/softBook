@@ -1,24 +1,24 @@
-import {Schema,model} from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const commentSchema = new Schema({
-    commentText:{
-        type:String,
-        required:true,
-        trim:true
+    commentText: {
+        type: String,
+        required: true,
+        trim: true
     },
-    commentedBy:{
-        type:Schema.Types.ObjectId,
-        ref:'User'
+    commentedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
-    post:{
-        type:Schema.Types.ObjectId,
-        ref:'Post'
+    post: {
+        type: Schema.Types.ObjectId,
+        ref: 'Post'
     },
-    comments:{
-        type:Schema.Types.ObjectId,
-        ref:'Comment'
+    comments: {
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
     }
 })
 
-const Comment = model('Comment',commentSchema);
+const Comment = model('Comment', commentSchema);
 export default Comment;
