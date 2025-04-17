@@ -18,6 +18,10 @@ SoftBook is a modern social networking app designed to connect people through se
 - dotenv
 - mongoose
 - Nodemon
+- jsonwebtoken
+- bcryptjs
+- cloudinary
+
 
 ## API Endpoints
 Users
