@@ -4,7 +4,9 @@ import fs from "fs";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import {hashPassword,verifyPwd} from "../utils/hashPwd.js";
 import { hash } from "bcryptjs";
-import { generateToken,verifyToken } from "../utils/jwt.js";
+import { generateAccessToken,generateRefreshToken,verifyToken } from "../utils/jwt.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const Createuser = async (req, res) => {
     //
@@ -263,24 +265,25 @@ const loginuser = async (req, res) => {
                     message: "Incorrect password"
                 })
 
-        const token = await generateToken(email,user.hashPwd)
-        if(!token)  
+        const accessToken = await generateAccessToken(email,user.hashPwd)
+        const refreshToken = await generateRefreshToken(email,user.hashPwd)
+        if(!accessToken || !refreshToken)  
             res.status(400).json({
                 success:false,
                 message:"token generation failed"
             })
-        console.log('token =>',token)
 
         // 4. send response to client
         res.status(200)
-            .cookie('token',token,{
+            .cookie('refreshtoken',refreshToken,{
                 httpOnly:true,
                 secure:true
             })
             .json({
                 success: true,
                 message: "Login Successfully",
-                user: user
+                user: user,
+                accessToken: accessToken
             })
     } catch (error) {
         res.status(400)
@@ -314,4 +317,9 @@ const verifyUser = async (req, res) => {
     }
 }
 
-export { Createuser, getallusers, getuser, deleteuser, updateuser, logoutuser, loginuser, verifyUser }
+const refreshAccessToken = async(req,res)=>{
+    
+     const token = generateAccessToken()
+}
+
+export { Createuser, getallusers, getuser, deleteuser, updateuser, logoutuser, loginuser, verifyUser, refreshAccessToken }

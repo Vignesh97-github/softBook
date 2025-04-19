@@ -2,16 +2,16 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config()
 
-const generateToken = async (email, password) => {
+const generateAccessToken = async (email, password) => {
     try {
         const token = jwt.sign(
             {
                 email: email,
                 password: password
             },
-            process.env.JWT_SECRET_KEY,
+            process.env.JWT_ACCESS_SECRET_KEY,
             {
-                expiresIn: process.env.JWT_EXPIRES_IN
+                expiresIn: process.env.JWT_ACCESS_EXPIRES_IN
             }
         )
         return token
@@ -19,15 +19,34 @@ const generateToken = async (email, password) => {
         return null
     }
 }
-
-const verifyToken = async (req,res,next) => {
-    const token = req.headers.authorization.split(' ')[1]
+const generateRefreshToken = async (email, password) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
-        return decoded
+        const token = jwt.sign(
+            {
+                email: email,
+                password: password
+            },
+            process.env.JWT_REFRESH_SECRET_KEY,
+            {
+                expiresIn: process.env.JWT_REFRESH_EXPIRES_IN
+            }
+        )
+        return token
     } catch (error) {
-        return false
+        return null
     }
 }
+const verifyToken = async (req,res,next) => {
+    const token = req.headers.authorization.split(' ')[1]
+    if(!token)
+        res.status(401)
+            .json({
+                success:false,
+                message:'Unauthorized'
+            })
+    const decoded = jwt.verify('token',process.env.JWT_ACCESS_SECRET_KEY)
+    req.user = decoded
+    next()
+}
 
-export { generateToken, verifyToken };
+export { generateAccessToken,generateRefreshToken, verifyToken };
