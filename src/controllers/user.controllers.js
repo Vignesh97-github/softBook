@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User from "../modules/user.model.js";
+import jwt from "jsonwebtoken";
 import fs from "fs";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import {hashPassword,verifyPwd} from "../utils/hashPwd.js";
@@ -319,7 +320,39 @@ const verifyUser = async (req, res) => {
 
 const refreshAccessToken = async(req,res)=>{
     
-     const token = generateAccessToken()
+     const {refreshToken} = req.cookies
+     if(!refreshToken)
+        res.status(400).json({
+            success:false,
+            message:"refresh token not found please login again"
+        })
+    try {
+        const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_SECRET_KEY)
+        if(!decoded)
+            res.status(400).json({
+                success:false,
+                message:"refresh token not valid please login again"
+            })
+        const token = generateAccessToken(decoded.email, decoded.password)
+        if(!token)
+            return res.status(400).json({
+                success:false,
+                message:"token generation failed"
+            })
+        res.status(200)
+            .json({
+                success:true,
+                message:"token refreshed successfully",
+                accessToken:token
+            })
+    } catch (error) {
+        res.status(400)
+            .json({
+                success: false,
+                message: error.message
+            })
+    }
+    
 }
 
 export { Createuser, getallusers, getuser, deleteuser, updateuser, logoutuser, loginuser, verifyUser, refreshAccessToken }

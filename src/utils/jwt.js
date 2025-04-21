@@ -2,12 +2,13 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config()
 
-const generateAccessToken = async (email, password) => {
+const generateAccessToken = async (email, password, role) => {
     try {
         const token = jwt.sign(
             {
                 email: email,
-                password: password
+                password: password,
+                role:role
             },
             process.env.JWT_ACCESS_SECRET_KEY,
             {
@@ -19,12 +20,13 @@ const generateAccessToken = async (email, password) => {
         return null
     }
 }
-const generateRefreshToken = async (email, password) => {
+const generateRefreshToken = async (email, password, role) => {
     try {
         const token = jwt.sign(
             {
                 email: email,
-                password: password
+                password: password,
+                role:role
             },
             process.env.JWT_REFRESH_SECRET_KEY,
             {
