@@ -1,5 +1,5 @@
 import uploadOnCloudinary from "../config/cloudinary.js";
-import Post from "../modules/post.model.js";
+import Post from "../models/post.model.js";
 
 const createPost = async (req,res)=>{
     const {postcaption} = req.body;

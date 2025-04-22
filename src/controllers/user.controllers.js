@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "../modules/user.model.js";
+import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import uploadOnCloudinary from "../config/cloudinary.js";
