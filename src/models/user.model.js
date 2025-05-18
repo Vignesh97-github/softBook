@@ -42,5 +42,8 @@ const userSchema = new Schema({
     hashPwd: String
 })
 
+userSchema.index({email:1})
+userSchema.index({name:1})
+
 const User = model('User', userSchema);
 export default User;
